@@ -12,6 +12,9 @@ import { routeTree } from "./routeTree.gen"
 import { ApiError, OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/provider"
 
+// Use Vite's global type definition for import.meta.env
+// No need to redeclare ImportMeta or ImportMetaEnv interfaces
+
 OpenAPI.BASE = import.meta.env.VITE_API_URL
 OpenAPI.TOKEN = async () => {
   return localStorage.getItem("access_token") || ""

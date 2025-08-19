@@ -7,7 +7,6 @@ import { FiLogOut } from "react-icons/fi"
 import type { UserPublic } from "@/client"
 import useAuth from "@/hooks/useAuth"
 import {
-  DrawerBackdrop,
   DrawerBody,
   DrawerCloseTrigger,
   DrawerContent,
@@ -30,7 +29,6 @@ const Sidebar = () => {
         open={open}
         onOpenChange={(e) => setOpen(e.open)}
       >
-        <DrawerBackdrop />
         <DrawerTrigger asChild>
           <IconButton
             variant="ghost"
@@ -42,6 +40,7 @@ const Sidebar = () => {
             m={4}
           >
             <FaBars />
+            
           </IconButton>
         </DrawerTrigger>
         <DrawerContent maxW="xs">
@@ -83,6 +82,7 @@ const Sidebar = () => {
         bg="bg.subtle"
         top={0}
         minW="xs"
+        width="10%"
         h="100vh"
         p={4}
       >
