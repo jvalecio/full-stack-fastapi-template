@@ -12,6 +12,7 @@ export default defineConfig({
   },
   plugins: [react(), TanStackRouterVite()],
   server: {
-    allowedHosts: ['1e5e00773b42.ngrok-free.app'], // 👈 libera o domínio do ngrok
+    host: true, // aceita conexões externas
+    allowedHosts: ['46547a43413d.ngrok-free.app'], // 👈 libera o domínio do ngrok
   },
 })
