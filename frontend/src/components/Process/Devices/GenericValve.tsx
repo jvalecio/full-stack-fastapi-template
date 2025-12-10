@@ -1,7 +1,14 @@
-import { Handle, Position, NodeProps, Node } from '@xyflow/react'
-import { Box, Image, Stack, Text } from '@chakra-ui/react'
-import { Tooltip } from '@/components/ui/tooltip'
+import {
+  Handle,
+  Position,
+  NodeProps,
+  Node,
+  useUpdateNodeInternals
+} from '@xyflow/react'
+import { Box, Image } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+
+import DragRotateLabel from '@/components/Process/Devices/DragRotateLabel'
 
 const IMG_ROOT = './assets/images/devices'
 const DEFAULT_IDENT = 'Generic Valve'
@@ -27,25 +34,10 @@ const DEFAULT_VALVE_DATA = {
 }
 
 export default function GenericValveNode (props: NodeProps<ValveDataType>) {
-  const [textPos, setTextPos] = useState({ x: 0, y: 0 })
-  const [textRotation, setTextRotation] = useState(0)
   const [nodeRotation, setNodeRotation] = useState(0)
-  const [isDraggingText, setIsDraggingText] = useState(false)
+
   const [isDraggingNode, setIsDraggingNode] = useState(false)
-
-  
-  // 🔄 ROTACIONA O TEXTO AO APERTAR ESPAÇO
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== 'Space') return
-      if (!isDraggingText) return // só gira quando estiver arrastando o texto
-
-      setTextRotation(r => r - 90)
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isDraggingText])
+  const updateNodeInternals = useUpdateNodeInternals()
 
   // 🔄 ROTACIONA O NODE AO APERTAR ESPAÇO
   useEffect(() => {
@@ -54,11 +46,12 @@ export default function GenericValveNode (props: NodeProps<ValveDataType>) {
       if (!isDraggingNode) return // só gira quando estiver arrastando o texto
 
       setNodeRotation(r => r - 90)
+      updateNodeInternals(props.id)
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isDraggingNode])
+  }, [isDraggingNode, updateNodeInternals])
 
   const data = {
     ...DEFAULT_VALVE_DATA,
@@ -106,12 +99,10 @@ export default function GenericValveNode (props: NodeProps<ValveDataType>) {
   return (
     <>
       <Box
-        position='relative'
-        w='149px'
-        h='150px'
-        m={0}
-        p={0}
-        //backgroundColor={'blue'}
+        //position='relative'
+        w='120px'
+        h='100px'
+        //backgroundColor={'grey'}
         style={{
           transform: `rotate(${nodeRotation}deg)`
         }}
@@ -133,93 +124,47 @@ export default function GenericValveNode (props: NodeProps<ValveDataType>) {
         onClick={handleClick}
         cursor='pointer'
       >
-        <Box>
-          {data.actuator_prop && (
-            <Tooltip content={data.actuator_prop || DEFAULT_IDENT}>
-              <Image
-                position='absolute'
-                mt='50%'
-                ml='50%'
-                transform='translateY(-100%) translateX(-50%)'
-                src={
-                  data.actuator_prop === 'manual'
-                    ? `${IMG_ROOT}/manual_prop.svg`
-                    : data.actuator_prop === 'pneumatic'
-                    ? `${IMG_ROOT}/pneumatic_prop.svg`
-                    : `${IMG_ROOT}/electric_prop.svg`
-                }
-              />
-            </Tooltip>
-          )}
-
+        {data.actuator_prop && (
+          //<Tooltip content={data.actuator_prop || DEFAULT_IDENT}>
           <Image
-            loading='eager'
             position='absolute'
-            mt='50%'
-            ml='0%'
-            transform='translateY(-50%)'
+            width='40%'
+            top='50%'
+            left='50%'
+            transform='translateY(-100%) translateX(-50%)'
             src={
-              state === 'open'
-                ? `${IMG_ROOT}/valve_2w_generic_open.svg`
-                : `${IMG_ROOT}/valve_2w_generic_closed.svg`
+              data.actuator_prop === 'manual'
+                ? `${IMG_ROOT}/manual_prop.svg`
+                : data.actuator_prop === 'pneumatic'
+                ? `${IMG_ROOT}/pneumatic_prop.svg`
+                : `${IMG_ROOT}/electric_prop.svg`
             }
-            alt={data.tooltip || DEFAULT_IDENT}
           />
-        </Box>
+          //</Tooltip>
+        )}
+
+        <Image
+          //backgroundColor={'pink'}
+          //loading='eager'
+          position='absolute'
+          transform='translateY(-50%)'
+          top='50%'
+          w='100%'
+          //ml='0%'
+          src={
+            state === 'open'
+              ? `${IMG_ROOT}/valve_2w_generic_open.svg`
+              : `${IMG_ROOT}/valve_2w_generic_closed.svg`
+          }
+          alt={data.tooltip || DEFAULT_IDENT}
+        />
+
         <Handle type='source' position={Position.Left} />
         <Handle type='target' position={Position.Right} />
       </Box>
 
       {/* TEXTO ARRASTÁVEL + ROTACIONÁVEL */}
-      <Text
-        className='nodrag nopan'
-        position='relative'
-        cursor='grab'
-        fontSize='xl'
-        onPointerDown={e => {
-          e.stopPropagation()
-          e.preventDefault()
-
-          setIsDraggingText(true)
-
-          const startMouseX = e.clientX
-          const startMouseY = e.clientY
-
-          const startTextX = textPos.x
-          const startTextY = textPos.y
-
-          const move = (ev: PointerEvent) => {
-            ev.stopPropagation()
-            ev.preventDefault()
-
-            const deltaX = ev.clientX - startMouseX
-            const deltaY = ev.clientY - startMouseY
-
-            setTextPos({
-              x: startTextX + deltaX,
-              y: startTextY + deltaY
-            })
-          }
-
-          const up = (ev: PointerEvent) => {
-            ev.stopPropagation()
-            ev.preventDefault()
-            setIsDraggingText(false)
-
-            window.removeEventListener('pointermove', move)
-            window.removeEventListener('pointerup', up)
-          }
-
-          window.addEventListener('pointermove', move)
-          window.addEventListener('pointerup', up)
-        }}
-        style={{
-          transform: `translate(${textPos.x}px, ${textPos.y}px) rotate(${textRotation}deg)`,
-          transformOrigin: 'center'
-        }}
-      >
-        {data.tag}
-      </Text>
+      <DragRotateLabel label={data.tag}/>
     </>
   )
 }

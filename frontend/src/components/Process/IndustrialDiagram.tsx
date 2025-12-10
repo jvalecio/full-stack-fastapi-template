@@ -18,20 +18,16 @@ import FlowMeterNode from './FlowMeter'
 import { AnimatedSVGEdge } from './Devices/AnimatedSVGEdge'
 
 import TankNode from './Devices/Tank'
-import PumpNode from './Devices/Pump'
+import PumpNode from './Devices/PumpNode'
 import GenericValveNode from '@/components/Process/Devices/GenericValve'
-import MecConNode from '@/components/Process/Devices/MechanicalConnector'
 import '@xyflow/react/dist/style.css'
 
-import { Sidebar } from './Sidebar'
-import { DnDProvider } from './useDnD'
 
 const nodeTypes = {
   valve: GenericValveNode,
   flowMeter: FlowMeterNode,
-  meccon: MecConNode,
   tank: TankNode,
-  pump: PumpNode
+  pump: PumpNode,
 }
 
 const edgeTypes = {
@@ -44,28 +40,28 @@ const initialEdges = [
 
 const initialNodes = [
   {
-    id: 'mc_001',
-    type: 'meccon',
+    id: 'mc_002',
+    type: 'pump',
     position: { x: 200, y: 0 },
-    data: { tag: 'mc1' }
+    base: { tag: 'mc1' }
   },
   {
-    id: 'valve_001',
-    type: 'valve',
+    id: 'tank_001',
+    type: 'tank',
     position: { x: 0, y: 0 },
-    data: { tag: 'VS1', state: 'open', actuator_prop: 'manual' }
+    base: { tag: 'VS1', state: 'open', actuator_prop: 'manual' }
   },
   {
     id: 'valve_002',
     type: 'valve',
     position: { x: 100, y: 0 },
-    data: { tag: 'VS2', state: 'open', actuator_prop: 'manual' }
+    base: { tag: 'VS2', state: 'open', actuator_prop: 'manual' }
   },
   {
     id: 'valve_003',
     type: 'valve',
     position: { x: 100, y: 200 },
-    data: { tag: 'VS3', state: 'open', actuator_prop: 'manual' }
+    base: { tag: 'VS3', state: 'open', actuator_prop: 'manual' }
   }
 ]
 
@@ -92,15 +88,14 @@ function ValvesDiagram () {
   //  []
   //);
   return (
-    <Box w='full' h='50vh' bg='white'>
-      <ReactFlowProvider>
-        <DnDProvider>
+    <Box w='full' h='60vh' bg='white' className="react-flow-wrapper">
           <ReactFlow
+            className="react-flow"
             snapToGrid={true}
             snapGrid={[25, 25]}
             //connectionMode={ConnectionMode.Loose}
 
-            maxZoom={3}
+            maxZoom={5}
             defaultEdgeOptions={{ type: 'step' }}
             nodes={nodes}
             edges={edges}
@@ -114,9 +109,6 @@ function ValvesDiagram () {
           >
             <Controls />
           </ReactFlow>
-          <Sidebar />
-        </DnDProvider>
-      </ReactFlowProvider>
     </Box>
   )
 }

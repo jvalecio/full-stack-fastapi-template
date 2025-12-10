@@ -85,12 +85,12 @@ export const useDnD = () => {
       const elementUnderPointer = document.elementFromPoint(event.clientX, event.clientY);
       const isDroppingOnFlow = elementUnderPointer?.closest('.react-flow');
       event.preventDefault();
-
+      console.log('Dropping on flow:', isDroppingOnFlow);
       // Only allow dropping on the flow area
-      if (isDroppingOnFlow) {
+      //if (isDroppingOnFlow) {
         const flowPosition = screenToFlowPosition({ x: event.clientX, y: event.clientY });
         dropAction?.({ position: flowPosition });
-      }
+      //}
 
       setIsDragging(false);
     },
