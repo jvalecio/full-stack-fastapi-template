@@ -1,13 +1,12 @@
-import ReactFlow, {
+import {
   Handle,
   Position,
   NodeProps,
   Node 
 } from '@xyflow/react'
 import { Box, Image } from '@chakra-ui/react'
-import { useState } from 'react'
 import { Tooltip } from "@/components/ui/tooltip"
-const IMG_ROOT = "./src/components/Process/Devices/assets"
+const IMG_ROOT = "./assets/images/devices"
 
 export type ValveNodeType = Node<
   {
@@ -18,7 +17,7 @@ export type ValveNodeType = Node<
   'valve'
 >
 
-export default function TankNode(props: NodeProps<ValveNodeType>) {
+export default function TankNode(props: NodeProps<ValveNodeType>) { 
   const { id, data } = props
 
   const handleClick = () => {
@@ -43,7 +42,7 @@ export default function TankNode(props: NodeProps<ValveNodeType>) {
       <Image
         loading='eager'
         src={`${IMG_ROOT}/tank.svg`}
-        w="300px"
+        //w="300px"
         //h="40px"
         alt={data?.label || 'Valve'}
         //mb={4}

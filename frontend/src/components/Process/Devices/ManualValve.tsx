@@ -1,13 +1,12 @@
-import ReactFlow, {
-  Handle,
-  Position,
-  NodeProps,
-  Node 
-} from '@xyflow/react'
-import { Box, Image } from '@chakra-ui/react'
-import { useState } from 'react'
 import { Tooltip } from "@/components/ui/tooltip"
-const IMG_ROOT = "./src/components/Process/Devices/assets"
+import { Box, Image } from '@chakra-ui/react'
+import {
+  Handle,
+  Node,
+  NodeProps,
+  Position
+} from '@xyflow/react'
+const IMG_ROOT = "./public/assets/images/devices"
 
 export type ValveNodeType = Node<
   {
@@ -49,9 +48,8 @@ function ValveNode(props: NodeProps<ValveNodeType>) {
         mb={4}
         />
       </Tooltip>
-
-      <Handle type='source' position={Position.Right} />
-      <Handle type='target' position={Position.Left} />
+      <Handle type='source'  position={Position.Right} />
+      <Handle type='target'  position={Position.Left} />
     </Box>
   )
 }

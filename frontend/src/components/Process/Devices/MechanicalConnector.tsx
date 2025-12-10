@@ -1,13 +1,11 @@
-import ReactFlow, {
+import {
   Handle,
   Position,
-  NodeProps
 } from '@xyflow/react'
 import { Box, Image } from '@chakra-ui/react'
 import { Tooltip } from "@/components/ui/tooltip"
 
-
-const IMG_ROOT = "./src/components/Process/Devices/assets"
+const IMG_ROOT = "./public/assets/images/devices"
 
 function MecConNode () {
 

@@ -96,7 +96,6 @@ def update_user_me(
     session.refresh(current_user)
     return current_user
 
-
 @router.patch("/me/password", response_model=Message)
 def update_password_me(
     *, session: SessionDep, body: UpdatePassword, current_user: CurrentUser

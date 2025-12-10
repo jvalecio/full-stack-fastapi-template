@@ -11,7 +11,7 @@ import { routeTree } from "./routeTree.gen"
 
 import { ApiError, OpenAPI } from "./client"
 import { CustomProvider } from "./components/ui/provider"
-
+import "./theme/reactflow.css";
 // Use Vite's global type definition for import.meta.env
 // No need to redeclare ImportMeta or ImportMetaEnv interfaces
 

@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 // Update the import path below to the correct relative path or package name
 import ValvesDiagram from '@/components/Process/IndustrialDiagram'
+import { ReactFlowProvider } from '@xyflow/react'
 
 export const Route = createFileRoute('/_layout/')({
   component: Dashboard
@@ -13,13 +14,17 @@ function Dashboard () {
   return (
     <>
       <Container maxW='full'>
-        <Box pt={12}>
+        <Box p={4}>
         <Heading size="lg" >
             Process Control Dashboard
         </Heading>
         <Separator m={1} />
+        
+        <Box h="10vh">
+          teste
+        </Box>
 
-       <ValvesDiagram />
+        <ValvesDiagram />
         
         </Box>
       </Container>

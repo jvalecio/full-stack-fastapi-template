@@ -1,8 +1,8 @@
-import { Container, Heading, RadioGroup, Stack } from '@chakra-ui/react'
+import { Container, Heading, RadioGroup } from '@chakra-ui/react'
 import { useTheme } from 'next-themes'
 
 const Appearance = () => {
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
   const items = [
     { label: 'System', value: 'system' },
     { label: 'Light Mode', value: 'light' },

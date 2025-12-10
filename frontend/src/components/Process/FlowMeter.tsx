@@ -1,7 +1,7 @@
 import { Box, Image, Text } from "@chakra-ui/react"
 import { Handle, Position, NodeProps, Node } from "@xyflow/react";
 import { useEffect, useState } from "react";
-import { Button, Input, Popover, Portal } from "@chakra-ui/react"
+import { Popover, Portal } from "@chakra-ui/react"
 
 export type FlowMeterNodeType = Node<
   {

@@ -2,6 +2,8 @@ import path from "node:path"
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin"
 import react from "@vitejs/plugin-react-swc"
 import { defineConfig } from "vite"
+import svgr from "vite-plugin-svgr";
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,7 +12,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  plugins: [react(), TanStackRouterVite()],
+  plugins: [react(), TanStackRouterVite(), svgr()],
   server: {
     host: true, // aceita conexões externas
     allowedHosts: ['46547a43413d.ngrok-free.app'], // 👈 libera o domínio do ngrok
