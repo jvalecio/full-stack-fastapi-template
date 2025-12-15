@@ -1,72 +1,35 @@
-import {
-  Handle,
-  Position,
-  NodeProps,
-  Node,
-  useUpdateNodeInternals
-} from '@xyflow/react'
-import { Box, Image } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Image } from '@chakra-ui/react'
+import { NodeProps, Position } from '@xyflow/react'
+import DeviceBase, { DeviceBaseProps } from './DeviceBase'
+import { useState } from 'react'
 
-import DragRotateLabel from '@/components/Process/Devices/DragRotateLabel'
-
-const IMG_ROOT = './assets/images/devices'
-const DEFAULT_IDENT = 'Generic Valve'
-
-export type ValveDataType = Node<
-  {
-    tag?: string
-    tooltip?: string
-    state?: 'open' | 'closed'
-    mechanism?: 'ball' | 'neddle'
-    actuator_prop?: 'manual' | 'pneumatic' | 'electric'
-    onToggle?: (id: string, state: 'open' | 'closed') => void
-  },
-  'valve'
->
-
-const DEFAULT_VALVE_DATA = {
-  tag: 'VALVE',
-  tooltip: 'Generic Valve',
-  state: 'open' as 'open' | 'closed',
-  mechanism: 'neddle' as 'ball' | 'neddle',
-  actuator_prop: 'manual' as 'manual' | 'pneumatic' | 'electric'
+export type ValveNodeData = {
+  tooltip?: string
+  state?: 'open' | 'closed'
+  mechanism?: 'ball' | 'neddle'
+  actuator_prop?: 'manual' | 'pneumatic' | 'electric'
+  rotation?: number
 }
 
-export default function GenericValveNode (props: NodeProps<ValveDataType>) {
-  const [nodeRotation, setNodeRotation] = useState(0)
+const DEFAULT_VALVE_DATA: ValveNodeData = {
+  tooltip: 'Generic Valve',
+  state: 'open',
+  mechanism: 'neddle',
+  actuator_prop: 'manual',
+  rotation: 0
+}
 
-  const [isDraggingNode, setIsDraggingNode] = useState(false)
-  const updateNodeInternals = useUpdateNodeInternals()
-
-  // 🔄 ROTACIONA O NODE AO APERTAR ESPAÇO
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code !== 'Space') return
-      if (!isDraggingNode) return // só gira quando estiver arrastando o texto
-
-      setNodeRotation(r => r - 90)
-      updateNodeInternals(props.id)
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isDraggingNode, updateNodeInternals])
-
-  const data = {
-    ...DEFAULT_VALVE_DATA,
-    ...props.data
-  }
-
-  const [state, setState] = useState<string>(data?.state || 'closed')
+export default function ValveNode (
+  props: NodeProps & { base: DeviceBaseProps }
+) {
+  const data = { ...DEFAULT_VALVE_DATA, ...props.data }
+  const [state, setState] = useState<'open' | 'closed'>(data.state ?? 'closed')
   const [loading, setLoading] = useState(false)
 
-  // 🔄 API toggle
+  // 🔹 API toggle
   const toggleValveHook = async () => {
-    const { id } = props
-
     const res = await fetch(
-      `http://localhost:8000/api/v1/devices/valve/${id}/toggle`,
+      `http://localhost:8000/api/v1/devices/valve/${props.id}/toggle`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
@@ -83,8 +46,8 @@ export default function GenericValveNode (props: NodeProps<ValveDataType>) {
 
   const handleClick = async () => {
     if (loading) return
-
     setLoading(true)
+
     try {
       const backendResponse = await toggleValveHook()
       const newState = backendResponse.new_state as 'open' | 'closed'
@@ -93,78 +56,42 @@ export default function GenericValveNode (props: NodeProps<ValveDataType>) {
       console.error(err)
       setState(prev => (prev === 'open' ? 'closed' : 'open'))
     }
+
     setLoading(false)
   }
 
   return (
-    <>
-      <Box
-        //position='relative'
-        w='120px'
-        h='100px'
-        //backgroundColor={'grey'}
-        style={{
-          transform: `rotate(${nodeRotation}deg)`
-        }}
-        onPointerDown={e => {
-          //e.stopPropagation()
-          //e.preventDefault()
+    <DeviceBase
+      {...props}
+      base={{
+        width: '100px',
+        height: '100px',
 
-          setIsDraggingNode(true)
-
-          const up = (ev: PointerEvent) => {
-            //ev.stopPropagation()
-            //ev.preventDefault()
-            setIsDraggingNode(false)
-            window.removeEventListener('pointerup', up)
-          }
-
-          window.addEventListener('pointerup', up)
-        }}
-        onClick={handleClick}
-        cursor='pointer'
-      >
-        {data.actuator_prop && (
-          //<Tooltip content={data.actuator_prop || DEFAULT_IDENT}>
+        graphic: (
           <Image
+            src={
+              state === 'closed'
+                ? `./assets/images/devices/valve_2w_generic_open.svg`
+                : `./assets/images/devices/valve_2w_generic_closed.svg`
+            }
             position='absolute'
-            width='40%'
             top='50%'
             left='50%'
-            transform='translateY(-100%) translateX(-50%)'
-            src={
-              data.actuator_prop === 'manual'
-                ? `${IMG_ROOT}/manual_prop.svg`
-                : data.actuator_prop === 'pneumatic'
-                ? `${IMG_ROOT}/pneumatic_prop.svg`
-                : `${IMG_ROOT}/electric_prop.svg`
-            }
+            transform='translate(-50%, -50%)'
+            width='100%'
           />
-          //</Tooltip>
-        )}
+        ),
 
-        <Image
-          //backgroundColor={'pink'}
-          //loading='eager'
-          position='absolute'
-          transform='translateY(-50%)'
-          top='50%'
-          w='100%'
-          //ml='0%'
-          src={
-            state === 'open'
-              ? `${IMG_ROOT}/valve_2w_generic_open.svg`
-              : `${IMG_ROOT}/valve_2w_generic_closed.svg`
-          }
-          alt={data.tooltip || DEFAULT_IDENT}
-        />
+        handles: [
+          { type: 'source', position: Position.Left },
+          { type: 'target', position: Position.Right }
+        ],
 
-        <Handle type='source' position={Position.Left} />
-        <Handle type='target' position={Position.Right} />
-      </Box>
-
-      {/* TEXTO ARRASTÁVEL + ROTACIONÁVEL */}
-      <DragRotateLabel label={data.tag}/>
-    </>
+        onClick: () => {
+          console.log('Valve clicked:', props.id)
+          handleClick()
+        }
+      }}
+    />
   )
 }

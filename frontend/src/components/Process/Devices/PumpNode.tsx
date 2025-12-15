@@ -9,9 +9,9 @@ export default function PumpNode(props: NodeProps & { base: DeviceBaseProps }) {
       {...props}
       
       base={{
-        width: '100px',
-        height: '150px',
-
+        width: '50px',
+        height: '50px',
+        
         graphic: (
           <Image
             src="./assets/images/devices/pump.svg"
@@ -27,7 +27,7 @@ export default function PumpNode(props: NodeProps & { base: DeviceBaseProps }) {
           { type: 'source', position: Position.Left },
           { type: 'target', position: Position.Right }
         ],
-
+        
         onClick: () => console.log("Pump clicked:", props.id)
       }}
     />

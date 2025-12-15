@@ -25,8 +25,7 @@ function Dashboard () {
       <Box p={4}>
         <Heading size='lg'>Process Control Dashboard</Heading>
         <Separator m={1} />
-
-        <Box h='10vh'>teste</Box>
+        
         <ReactFlowProvider>
           <DnDProvider>
             {/* Drawer com suporte para DnD */}
@@ -75,7 +74,7 @@ function Dashboard () {
             {/* O diagrama deve estar dentro do ReactFlowProvider */}
 
             <Box mt={4} className='react-flow'>
-              <ValvesDiagram/>
+              <ValvesDiagram />
             </Box>
           </DnDProvider>
         </ReactFlowProvider>

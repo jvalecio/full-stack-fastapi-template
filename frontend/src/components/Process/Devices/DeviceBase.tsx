@@ -2,7 +2,8 @@ import {
   Handle,
   Position,
   NodeProps,
-  useUpdateNodeInternals
+  useUpdateNodeInternals,
+  useKeyPress
 } from '@xyflow/react'
 
 import { Box } from '@chakra-ui/react'
@@ -30,45 +31,68 @@ export interface DeviceBaseProps {
     position: Position
     id?: string
   }>
-
-  /** Label externa */
-  tag?: string
 }
 
-export default function DeviceBase(props: NodeProps & { base: DeviceBaseProps }) {
-  const { id, base } = props
+export default function DeviceBase (
+  props: NodeProps & { base: DeviceBaseProps }
+) {
+  const { id, base, selected } = props
   const { width = '120px', height = '120px' } = base
 
   const updateNodeInternals = useUpdateNodeInternals()
-  const [rotation, setRotation] = useState(0)
-  const [draggingLabel, setDraggingLabel] = useState(false)
+  const [rotation, setRotation] = useState(props.data.rotation)
+  const [handlePosition, setHandlePosition] = useState<Position[]>([
+    Position.Left,
+    Position.Right
+  ])
 
-  // rotacionar enquanto arrasta label + pressionar Espaço
+  //useEffect(() => {
+  //  setRotation(props.data.rotation)
+  //}, [props.data])
+
+    // ✅ hook correto
+  const spacePressed = useKeyPress(' ')
+
+  // 🔄 rotaciona quando Space + node selecionado
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.code !== 'Space') return
-      if (!draggingLabel) return
+    if (!spacePressed) return
+    if (!selected) return
 
-      setRotation(r => r - 90)
-      updateNodeInternals(id)
+    setRotation((prev) => (prev + 90) % 360)
+  }, [spacePressed, selected])
+
+  // 🔧 atualiza handles + edges
+  useEffect(() => {
+    let newPosition: Position[] = [Position.Left, Position.Right]
+
+    switch (rotation) {
+      case 90:
+        newPosition = [Position.Bottom, Position.Top]
+        break
+      case 180:
+        newPosition = [Position.Right, Position.Left]
+        break
+      case 270:
+        newPosition = [Position.Top, Position.Bottom]
+        break
     }
 
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [draggingLabel])
+    setHandlePosition(newPosition)
+
+    requestAnimationFrame(() => {
+      updateNodeInternals(id)
+    })
+  }, [rotation, id])
 
   return (
     <>
       <Box
-        position="relative"
+        position='relative'
         width={width}
         height={height}
         style={{ transform: `rotate(${rotation}deg)` }}
         onClick={base.onClick}
-        cursor={base.onClick ? "pointer" : "default"}
-
-        onPointerDown={() => setDraggingLabel(true)}
-        onPointerUp={() => setDraggingLabel(false)}
+        cursor={base.onClick ? 'pointer' : 'default'}
       >
         {/* UNDERLAY */}
         {base.underlay}
@@ -78,25 +102,21 @@ export default function DeviceBase(props: NodeProps & { base: DeviceBaseProps })
 
         {/* OVERLAY */}
         {base.overlay}
-
-        {/* HANDLES */}
-        {base.handles?.map((h, i) => (
-          <Handle
-            key={i}
-            type={h.type}
-            position={h.position}
-            id={h.id}
-            //style={{ background: '#555' }}
-          />
-        ))}
       </Box>
 
-      {/* LABEL ARRASTÁVEL */}
-      {props.id && (
-        <DragRotateLabel
-          label={props.id}
+      {/* HANDLES */}
+      {base.handles?.map((h, i) => (
+        <Handle
+          key={i}
+          type={h.type}
+          position={handlePosition[i]}
+          id={h.id}
+          //style={{ background: '#555' }}
         />
-      )}
+      ))}
+
+      {/* LABEL ARRASTÁVEL */}
+      {props.id && <DragRotateLabel label={props.id} />}
     </>
   )
 }

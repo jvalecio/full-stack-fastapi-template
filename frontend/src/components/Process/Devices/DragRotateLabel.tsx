@@ -25,6 +25,7 @@ export default function ValveTextLabel({ label }: { label: string }) {
     <Text
       position="absolute"
       left="50%"
+      //mt="-25%"
       cursor="grab"
       fontSize="xl"
       className="nodrag nopan"

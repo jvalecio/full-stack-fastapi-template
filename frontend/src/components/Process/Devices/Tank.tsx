@@ -18,14 +18,14 @@ export default function TankNode(props: NodeProps & { base: DeviceBaseProps }) {
             position="absolute"
             top="50%"
             left="50%"
-            transform="translate(-50%, -50%) rotate(-90deg)"
+            transform="translate(-50%, -50%)"
             width="100%"
           />
         ),
 
         handles: [
-          { type: 'source', position: Position.Top },
-          { type: 'target', position: Position.Bottom }
+          { type: 'source', position: Position.Left },
+          { type: 'target', position: Position.Right }
         ],
 
         onClick: () => console.log("Pump clicked:", props.id)
