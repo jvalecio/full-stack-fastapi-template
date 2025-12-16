@@ -11,7 +11,8 @@ export default function TankNode(props: NodeProps & { base: DeviceBaseProps }) {
       base={{
         width: '150px',
         height: '150px',
-
+        drag_label: true,
+        
         graphic: (
           <Image
             src="./assets/images/devices/tank.svg"

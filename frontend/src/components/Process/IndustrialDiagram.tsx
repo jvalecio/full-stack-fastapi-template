@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Connection, useReactFlow } from '@xyflow/react'
+import { Connection, ConnectionMode, ControlButton, useReactFlow } from '@xyflow/react'
 
 import {
   ReactFlow,
@@ -8,16 +8,19 @@ import {
   Controls,
   addEdge,
 } from '@xyflow/react'
-
+import FlowControl from './FlowControl'
 import { Box, Button } from '@chakra-ui/react'
 import FlowMeterNode from './FlowMeter'
 
 import { AnimatedSVGEdge } from './Devices/AnimatedSVGEdge'
-
+import { BiSolidTimer } from "react-icons/bi";
 import TankNode from './Devices/Tank'
 import PumpNode from './Devices/PumpNode'
+import SensorNode from './Devices/SensorNode'
 import GenericValveNode from '@/components/Process/Devices/GenericValve'
+import Valve3WNode from '@/components/Process/Devices/GenericValve3W'
 import '@xyflow/react/dist/style.css'
+import { FaRunning } from 'react-icons/fa'
 
 const flowKey = 'example-flow';
 
@@ -26,6 +29,8 @@ const nodeTypes = {
   flowMeter: FlowMeterNode,
   tank: TankNode,
   pump: PumpNode,
+  sensor: SensorNode,
+  valve3w:Valve3WNode,
 }
 
 const edgeTypes = {
@@ -104,100 +109,8 @@ const initialEdges = [
 
 const initialNodes = [
   {
-    id: 'mc_002',
-    type: 'pump',
-    position: { x: 250, y: 0 },
-    data: {
-      rotation: 0
-    }
-  },
-  {
-    id: 'tank_001',
-    type: 'tank',
-    position: { x: -450, y: -275 },
-    data: {
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 270
-    }
-  },
-  {
-    id: 'tank_002',
-    type: 'tank',
-    position: { x: -325, y: -275 },
-    data: {
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 270
-    }
-  },
-  {
-    id: 'valve_002',
-    type: 'valve',
-    position: { x: -425, y: -25 },
-    data: {
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 270
-    }
-  },
-  {
-    id: 'valve_003',
-    type: 'valve',
-    position: { x: -300, y: -25 },
-    data: {
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 270
-    }
-  },
-  {
-    id: 'dndnode_0',
-    type: 'valve',
-    position: { x: -125, y: 150 },
-    data: {
-      tag: 'dndnode_1',
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 0
-    }
-  },
-  {
-    id: 'dndnode_2',
-    type: 'valve',
-    position: { x: 75, y: 325 },
-    data: {
-      tag: 'dndnode_3',
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 0
-    }
-  },
-  {
-    id: 'dndnode_4',
-    type: 'valve',
-    position: { x: 75, y: -25 },
-    data: {
-      tag: 'dndnode_5',
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 0
-    }
-  },
-  {
-    id: 'dndnode_6',
-    type: 'valve',
-    position: { x: 575, y: 175 },
-    data: {
-      tag: 'dndnode_7',
-      state: 'open',
-      actuator_prop: 'manual',
-      rotation: 0
-    }
-  },
-  {
     id: 'dndnode_8',
-    type: 'valve',
+    type: 'valve3w',
     position: { x: 200, y: 325 },
     data: {
       tag: 'dndnode_9',
@@ -213,15 +126,6 @@ function ValvesDiagram () {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
   const [rfInstance, setRfInstance] = useState(null);
   const { setViewport } = useReactFlow();
-  /*
-  useEffect(() => {
-    setNodes(initialNodes)
-  }, [initialNodes, setNodes])
-
-  useEffect(() => {
-    setEdges(initialEdges)
-  }, [initialEdges, setEdges])
-  */
 
   const onConnect = useCallback((params: Connection) => {
     // Se o React Flow tentar substituir o handle (auto-correção), ignore
@@ -271,7 +175,7 @@ function ValvesDiagram () {
             className="react-flow"
             snapToGrid={true}
             snapGrid={[25, 25]}
-            //connectionMode={ConnectionMode.Loose}
+            connectionMode={ConnectionMode.Loose}
             
             maxZoom={5}
             defaultEdgeOptions={{ type: 'step' }}
@@ -286,7 +190,9 @@ function ValvesDiagram () {
             fitView
             proOptions={{ hideAttribution: true }}
             >
-            <Controls />
+
+            <FlowControl/>
+            
           </ReactFlow>
     </Box>
   </>

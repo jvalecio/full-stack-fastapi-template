@@ -3,7 +3,8 @@ import {
   Position,
   NodeProps,
   useUpdateNodeInternals,
-  useKeyPress
+  useKeyPress,
+  useReactFlow
 } from '@xyflow/react'
 
 import { Box } from '@chakra-ui/react'
@@ -17,6 +18,8 @@ export interface DeviceBaseProps {
   /** Conteúdos opcionais acima/abaixo */
   overlay?: React.ReactNode
   underlay?: React.ReactNode
+
+  drag_label?: boolean
 
   /** Dimensões */
   width?: string | number
@@ -36,36 +39,30 @@ export interface DeviceBaseProps {
 export default function DeviceBase (
   props: NodeProps & { base: DeviceBaseProps }
 ) {
-  const { id, base, selected } = props
+  const { id, base } = props
   const { width = '120px', height = '120px' } = base
 
   const updateNodeInternals = useUpdateNodeInternals()
-  const [rotation, setRotation] = useState(props.data.rotation)
-  const [handlePosition, setHandlePosition] = useState<Position[]>([
-    Position.Left,
-    Position.Right
-  ])
+  const {updateNodeData} = useReactFlow()
+
+  const [dragging, setDragging] = useState(false)
+
+  const [handlePosition, setHandlePosition] = useState<Position[]>(getPosition())
 
   //useEffect(() => {
   //  setRotation(props.data.rotation)
   //}, [props.data])
 
-    // ✅ hook correto
+  // ✅ hook correto
   const spacePressed = useKeyPress(' ')
 
-  // 🔄 rotaciona quando Space + node selecionado
-  useEffect(() => {
-    if (!spacePressed) return
-    if (!selected) return
+  function getPosition(){
+    let newPosition: Position[] = [Position.Bottom, Position.Top]
 
-    setRotation((prev) => (prev + 90) % 360)
-  }, [spacePressed, selected])
-
-  // 🔧 atualiza handles + edges
-  useEffect(() => {
-    let newPosition: Position[] = [Position.Left, Position.Right]
-
-    switch (rotation) {
+    switch (props.data.rotation) {
+      case 0:
+        newPosition = [Position.Left, Position.Right]
+        break;
       case 90:
         newPosition = [Position.Bottom, Position.Top]
         break
@@ -75,14 +72,32 @@ export default function DeviceBase (
       case 270:
         newPosition = [Position.Top, Position.Bottom]
         break
+      default:
+        props.data.rotation = 0
+        newPosition = [Position.Left, Position.Right]
+        break;
     }
+    return newPosition
+  }
 
-    setHandlePosition(newPosition)
+  // 🔄 rotaciona quando Space + node selecionado
+  useEffect(() => {
+    if (!spacePressed) return
+    if (!dragging) return
+
+    updateNodeData(id, {rotation: (((props.data.rotation as number) + 90) % 360)})
+
+  }, [spacePressed])
+
+  // 🔧 atualiza handles + edges
+  useEffect(() => {
+  
+    setHandlePosition(getPosition())
 
     requestAnimationFrame(() => {
       updateNodeInternals(id)
     })
-  }, [rotation, id])
+  }, [props.data.rotation])
 
   return (
     <>
@@ -90,7 +105,16 @@ export default function DeviceBase (
         position='relative'
         width={width}
         height={height}
-        style={{ transform: `rotate(${rotation}deg)` }}
+        style={{ transform: `rotate(${props.data.rotation}deg)` }}
+        onPointerDown={e => {
+          setDragging(true)
+
+          const up = () => {
+            setDragging(false)
+            window.removeEventListener('pointerup', up)
+          }
+          window.addEventListener('pointerup', up)
+        }}
         onClick={base.onClick}
         cursor={base.onClick ? 'pointer' : 'default'}
       >
@@ -116,7 +140,7 @@ export default function DeviceBase (
       ))}
 
       {/* LABEL ARRASTÁVEL */}
-      {props.id && <DragRotateLabel label={props.id} />}
+      {props.id && base.drag_label && <DragRotateLabel label={props.id} />}
     </>
   )
 }

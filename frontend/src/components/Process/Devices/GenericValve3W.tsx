@@ -19,7 +19,7 @@ const DEFAULT_VALVE_DATA: ValveNodeData = {
   rotation: 0
 }
 
-export default function ValveNode (
+export default function Valve3WNode (
   props: NodeProps & { base: DeviceBaseProps }
 ) {
   const data = { ...DEFAULT_VALVE_DATA, ...props.data }
@@ -71,8 +71,8 @@ export default function ValveNode (
           <Image
             src={
               state === 'closed'
-                ? `./assets/images/devices/valve_2w_generic_open.svg`
-                : `./assets/images/devices/valve_2w_generic_closed.svg`
+                ? `./assets/images/devices/valve_3w_s1.svg`
+                : `./assets/images/devices/valve_3w_s1.svg`
             }
             position='absolute'
             top='50%'
@@ -83,8 +83,9 @@ export default function ValveNode (
         ),
 
         handles: [
-          { type: 'source', position: Position.Left },
-          { type: 'target', position: Position.Right }
+            { type: 'target', position: Position.Left, id:'a' },
+            //{ type: 'target', position: Position.Right, id:'b' },
+            //{ type: 'source', position: Position.Left, id: 'c' },
         ],
 
         onClick: () => {

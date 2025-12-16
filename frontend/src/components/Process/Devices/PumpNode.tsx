@@ -11,6 +11,7 @@ export default function PumpNode(props: NodeProps & { base: DeviceBaseProps }) {
       base={{
         width: '50px',
         height: '50px',
+        drag_label: true,
         
         graphic: (
           <Image
