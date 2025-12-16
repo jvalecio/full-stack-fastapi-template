@@ -2,13 +2,12 @@ import {
   Handle,
   Position,
   NodeProps,
-  useUpdateNodeInternals,
   useKeyPress,
   useReactFlow
 } from '@xyflow/react'
 
 import { Box } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import DragRotateLabel from './DragRotateLabel'
 
 export interface DeviceBaseProps {
@@ -42,42 +41,27 @@ export default function DeviceBase (
   const { id, base } = props
   const { width = '120px', height = '120px' } = base
 
-  const updateNodeInternals = useUpdateNodeInternals()
-  const {updateNodeData} = useReactFlow()
+  const { updateNodeData } = useReactFlow()
 
   const [dragging, setDragging] = useState(false)
 
-  const [handlePosition, setHandlePosition] = useState<Position[]>(getPosition())
+  const rotationArray = [
+    Position.Left,
+    Position.Top,
+    Position.Right,
+    Position.Bottom
+  ]
 
-  //useEffect(() => {
-  //  setRotation(props.data.rotation)
-  //}, [props.data])
+  const handleBasePosition = useMemo<number[]>(
+    () => base.handles?.map(h => rotationArray.indexOf(h.position)) ?? [],
+    [base.handles, rotationArray]
+  )
 
-  // ✅ hook correto
   const spacePressed = useKeyPress(' ')
 
-  function getPosition(){
-    let newPosition: Position[] = [Position.Bottom, Position.Top]
-
-    switch (props.data.rotation) {
-      case 0:
-        newPosition = [Position.Left, Position.Right]
-        break;
-      case 90:
-        newPosition = [Position.Bottom, Position.Top]
-        break
-      case 180:
-        newPosition = [Position.Right, Position.Left]
-        break
-      case 270:
-        newPosition = [Position.Top, Position.Bottom]
-        break
-      default:
-        props.data.rotation = 0
-        newPosition = [Position.Left, Position.Right]
-        break;
-    }
-    return newPosition
+  function getPosition (): number[] {
+    const rotationSteps = ((props.data.rotation as number) ?? 0) / 90
+    return handleBasePosition.map(v => (v + rotationSteps) % 4)
   }
 
   // 🔄 rotaciona quando Space + node selecionado
@@ -85,24 +69,16 @@ export default function DeviceBase (
     if (!spacePressed) return
     if (!dragging) return
 
-    updateNodeData(id, {rotation: (((props.data.rotation as number) + 90) % 360)})
-
-  }, [spacePressed])
-
-  // 🔧 atualiza handles + edges
-  useEffect(() => {
-  
-    setHandlePosition(getPosition())
-
-    requestAnimationFrame(() => {
-      updateNodeInternals(id)
+    updateNodeData(id, {
+      rotation: ((props.data.rotation as number) + 90) % 360
     })
-  }, [props.data.rotation])
+  }, [spacePressed])
 
   return (
     <>
       <Box
         position='relative'
+        overflow='visible'
         width={width}
         height={height}
         style={{ transform: `rotate(${props.data.rotation}deg)` }}
@@ -133,7 +109,7 @@ export default function DeviceBase (
         <Handle
           key={i}
           type={h.type}
-          position={handlePosition[i]}
+          position={rotationArray[getPosition()[i]]}
           id={h.id}
           //style={{ background: '#555' }}
         />

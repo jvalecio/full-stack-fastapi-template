@@ -84,8 +84,8 @@ export default function Valve3WNode (
 
         handles: [
             { type: 'target', position: Position.Left, id:'a' },
-            //{ type: 'target', position: Position.Right, id:'b' },
-            //{ type: 'source', position: Position.Left, id: 'c' },
+            { type: 'target', position: Position.Right, id:'b' },
+            { type: 'source', position: Position.Bottom, id: 'c' },
         ],
 
         onClick: () => {

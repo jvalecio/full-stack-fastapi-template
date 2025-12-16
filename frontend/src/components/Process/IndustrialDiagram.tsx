@@ -39,70 +39,7 @@ const edgeTypes = {
 
 const initialEdges = [
   {
-    id: 'e1-2',
-    source: 'SOURCE',
-    target: 'ENTRYA',
-    type: 'animatedSvg'
-  },
-  {
-    id: 'xy-edge__valve_003-tank_002',
-    source: 'valve_003',
-    target: 'tank_002',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_0-valve_003',
-    source: 'dndnode_0',
-    target: 'valve_003',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__valve_002-tank_001',
-    source: 'valve_002',
-    target: 'tank_001',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_0-valve_002',
-    source: 'dndnode_0',
-    target: 'valve_002',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_2-dndnode_0',
-    source: 'dndnode_2',
-    target: 'dndnode_0',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_4-dndnode_0',
-    source: 'dndnode_4',
-    target: 'dndnode_0',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__mc_002-dndnode_4',
-    source: 'mc_002',
-    target: 'dndnode_4',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_6-mc_002',
-    source: 'dndnode_6',
-    target: 'mc_002',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_8-dndnode_2',
-    source: 'dndnode_8',
-    target: 'dndnode_2',
-    type: 'step'
-  },
-  {
-    id: 'xy-edge__dndnode_6-dndnode_8',
-    source: 'dndnode_6',
-    target: 'dndnode_8',
-    type: 'step'
+    
   }
 ]
 
@@ -114,6 +51,28 @@ const initialNodes = [
     position: { x: 200, y: 325 },
     data: {
       tag: 'dndnode_9',
+      state: 'open',
+      actuator_prop: 'manual',
+      rotation: 0
+    }
+  },
+  {
+    id: 'valve1',
+    type: 'valve',
+    position: { x: 200, y: 225 },
+    data: {
+      tag: 'valve1',
+      state: 'open',
+      actuator_prop: 'manual',
+      rotation: 0
+    }
+  },
+  {
+    id: 'valve2',
+    type: 'valve',
+    position: { x: 100, y: 325 },
+    data: {
+      tag: 'valve2',
       state: 'open',
       actuator_prop: 'manual',
       rotation: 0
