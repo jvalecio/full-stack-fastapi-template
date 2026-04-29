@@ -1,21 +1,21 @@
 import { ControlButton, Controls } from '@xyflow/react'
-import { useState } from 'react'
-import { FaRunning } from 'react-icons/fa'
+import { FaLock, FaUnlock } from 'react-icons/fa'
+import { useDiagramContext } from './DiagramContext'
 
-export default function FlowControl () {
-  const [selected, setSelected] = useState(false)
-  function handleRealTimeButton () {
-    setSelected(prev => !prev)
-  }
+export default function FlowControl() {
+  const { mode, locked, setLocked } = useDiagramContext()
 
   return (
-    <Controls>
-      <ControlButton
-        onClick={handleRealTimeButton}
-        style={{ backgroundColor: selected ? '#34C87C' : 'white' }}
-      >
-        <FaRunning />
-      </ControlButton>
+    <Controls showInteractive={false}>
+      {mode === 'run' && (
+        <ControlButton
+          onClick={() => setLocked(!locked)}
+          title={locked ? 'Desbloquear interações' : 'Bloquear interações'}
+          style={{ backgroundColor: locked ? '#ef4444' : 'white' }}
+        >
+          {locked ? <FaLock color='white' /> : <FaUnlock />}
+        </ControlButton>
+      )}
     </Controls>
   )
 }

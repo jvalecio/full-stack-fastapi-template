@@ -1,6 +1,6 @@
 import { Image } from '@chakra-ui/react'
 import { NodeProps, Position } from '@xyflow/react'
-import DeviceBase, { DeviceBaseProps } from './DeviceBase'
+import DeviceBase from './DeviceBase'
 import { useState } from 'react'
 
 export type ValveNodeData = {
@@ -20,7 +20,7 @@ const DEFAULT_VALVE_DATA: ValveNodeData = {
 }
 
 export default function ValveNode (
-  props: NodeProps & { base: DeviceBaseProps }
+  props: NodeProps
 ) {
   const data = { ...DEFAULT_VALVE_DATA, ...props.data }
   const [state, setState] = useState<'open' | 'closed'>(data.state ?? 'closed')
@@ -71,8 +71,8 @@ export default function ValveNode (
           <Image
             src={
               state === 'closed'
-                ? `./assets/images/devices/valve_2w_generic_open.svg`
-                : `./assets/images/devices/valve_2w_generic_closed.svg`
+                ? `/assets/images/devices/valve_2w_generic_open.svg`
+                : `/assets/images/devices/valve_2w_generic_closed.svg`
             }
             position='absolute'
             top='50%'

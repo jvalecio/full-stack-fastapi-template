@@ -1,8 +1,8 @@
 import { Image } from '@chakra-ui/react'
 import { NodeProps, Position } from '@xyflow/react'
-import DeviceBase, { DeviceBaseProps } from './DeviceBase'
+import DeviceBase from './DeviceBase'
 
-export default function PumpNode(props: NodeProps & { base: DeviceBaseProps }) {
+export default function PumpNode(props: NodeProps) {
 
   return (
     <DeviceBase
@@ -15,7 +15,7 @@ export default function PumpNode(props: NodeProps & { base: DeviceBaseProps }) {
         
         graphic: (
           <Image
-            src="./assets/images/devices/pump.svg"
+            src="/assets/images/devices/pump.svg"
             position="absolute"
             top="50%"
             left="50%"

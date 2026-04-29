@@ -5,10 +5,22 @@ services:
   # http://dashboard.localhost.tiangolo.com: frontend
   # etc. To enable it, update .env, set:
   # DOMAIN=localhost.tiangolo.com
-  proxy:
-    image: traefik:3.0
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      CONTAINERS: 1
+      NETWORKS: 1
+      SERVICES: 1
+      TASKS: 1
+    networks:
+      - default
+
+  proxy:
+    image: traefik:3.0
+    depends_on:
+      - socket-proxy
     ports:
       - "80:80"
       - "8090:8080"
@@ -16,6 +28,7 @@ services:
     command:
       # Enable Docker in Traefik, so that it reads labels from Docker services
       - --providers.docker
+      - --providers.docker.endpoint=tcp://socket-proxy:2375
       # Add a constraint to only use services with the label for this stack
       - --providers.docker.constraints=Label(`traefik.constraint-label`, `traefik-public`)
       # Do not expose all Docker services, only the ones explicitly exposed

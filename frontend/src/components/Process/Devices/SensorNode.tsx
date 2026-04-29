@@ -1,10 +1,9 @@
 import { Image, Text } from '@chakra-ui/react'
 import { NodeProps, Position } from '@xyflow/react'
-import DeviceBase, { DeviceBaseProps } from './DeviceBase'
-import DragRotateLabel from './DragRotateLabel'
+import DeviceBase from './DeviceBase'
 
 export default function SensorNode (
-  props: NodeProps & { base: DeviceBaseProps }
+  props: NodeProps
 ) {
   return (
     <>
@@ -16,7 +15,7 @@ export default function SensorNode (
           drag_label: false,
           graphic: (
             <Image
-              src='./assets/images/devices/pump.svg'
+              src='/assets/images/devices/pump.svg'
               position='absolute'
               top='50%'
               left='50%'
